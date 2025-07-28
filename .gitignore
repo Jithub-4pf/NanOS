@@ -1,0 +1,38 @@
+# Build artifacts
+*.o
+*.bin
+*.iso
+*.img
+
+# Generated files
+myos.bin
+myos.iso
+test_fs.img
+
+# Build directories
+isodir/
+
+
+# Font files (large binary files)
+*.psf
+*.bdf
+font_psf.c
+
+# Terminus font directory (large external dependency)
+terminus-font-4.49.1/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
