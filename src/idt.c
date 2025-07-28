@@ -121,7 +121,7 @@ void irq_handler_next(registers_t regs)
         outb(PIC2_COMMAND, 0x20);
     }
     outb(PIC1_COMMAND, 0x20);
-    __asm__ __volatile__("sti");
+    // No explicit 'sti' here; IF will be restored by 'iret' after we return
     return;
 }
 

@@ -652,9 +652,8 @@ void shell_process(void) {
     shell_input_len = 0;
     while (1) {
         if (keyboard_buffer_empty()) {
-            process_t* cur = scheduler_current();
-            cur->state = TASK_BLOCKED;
-            process_yield();
+            // Just wait for keyboard input without scheduler blocking
+            __asm__ volatile("hlt");
             continue;
         }
         char c = keyboard_getchar();
@@ -687,7 +686,7 @@ void shell_process(void) {
                 monitor_putchar(c);
             }
         }
-        scheduler_maybe_resched();
+        // scheduler_maybe_resched(); // Disabled for direct shell mode
     }
 }
 
@@ -759,6 +758,7 @@ __attribute__((used)) __attribute__((cdecl)) void kernel_main(uint32_t multiboot
 
     gdt_init();
     idt_init();
+    pic_init();
     paging_init();
     paging_install_page_fault_handler();
     monitor_write("[BOOT] VGA/Monitor... [OK]\n");
@@ -788,6 +788,7 @@ __attribute__((used)) __attribute__((cdecl)) void kernel_main(uint32_t multiboot
     monitor_write("[BOOT] Physical Memory... [OK]\n");
 
     keyboard_driver_register();
+    keyboard_buffer_init(128);  // Initialize keyboard buffer
     monitor_write("[BOOT] Keyboard... [OK]\n");
 
     // Initialize filesystem
@@ -831,19 +832,29 @@ __attribute__((used)) __attribute__((cdecl)) void kernel_main(uint32_t multiboot
         monitor_write("[BOOT] RAM disk creation failed - out of memory\n");
     }
 
+    monitor_write("[BOOT] Initializing processes... ");
     process_init();
     scheduler_init();
+    monitor_write("[OK]\n");
+
+    monitor_write("[BOOT] Creating processes... ");
     process_t* idle = process_create(idle_process, 4096);
     scheduler_add(idle);
     process_t* shell = process_create(shell_process, 4096);
     shell_proc = shell;
     scheduler_add(shell);
+    monitor_write("[OK]\n");
+
+    monitor_write("[BOOT] Starting timer... ");
     timer_init();
+    monitor_write("[OK]\n");
 
     monitor_write("[BOOT] Enabling Interrupts... ");
     asm volatile ("sti");
     monitor_write("[OK]\n");
 
-    // Idle process takes over
+    monitor_write("[BOOT] Scheduler running.\n");
+
+    // Enter idle loop; scheduler will switch tasks on timer interrupts
     idle_process();
 }

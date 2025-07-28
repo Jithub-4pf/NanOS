@@ -78,7 +78,7 @@ void scheduler_tick() {
         current = process_list;
         current->state = TASK_RUNNING;
         current->time_slice = 5;
-        return;
+        // Force immediate execution by falling through to normal scheduling
     }
     // Wake up sleeping processes
     process_t* p = process_list;
