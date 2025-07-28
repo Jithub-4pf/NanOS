@@ -52,7 +52,7 @@ sudo port install qemu
 ### Quick Start
 ```bash
 # Clone the repository
-git clone [your-repo-url]
+git clone https://github.com/Jithub-4pf/NanOS.git
 cd NanOS
 
 # Run the pre-built kernel (no compilation needed!)
