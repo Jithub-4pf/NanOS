@@ -1,11 +1,8 @@
 # Build artifacts
 *.o
-*.bin
 *.iso
 *.img
 
-# Generated files
-myos.bin
 myos.iso
 test_fs.img
 
