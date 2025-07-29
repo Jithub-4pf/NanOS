@@ -27,8 +27,13 @@ LINKER_SCRIPT=linker.ld
 KERNEL_BIN=myos.bin
 
 # Build the kernel
-all: $(KERNEL_BIN)
-	echo "Kernel built successfully"
+all: iso 
+	mkdir -p isodir/boot/grub
+	cp myos.bin isodir/boot/myos.bin
+	cp grub.cfg isodir/boot/grub/grub.cfg
+	grub-mkrescue -o myos.iso isodir
+	echo "done"
+iso: $(KERNEL_BIN)
 
 $(KERNEL_BIN): $(ASM_OBJ) $(KERNEL_OBJ) $(IDT_OBJ) $(ISR_OBJ)
 	$(LD) -T $(LINKER_SCRIPT) -o $@ $(ASM_OBJ) $(KERNEL_OBJ) $(IDT_OBJ) $(ISR_OBJ)
@@ -42,7 +47,7 @@ $(BOOT_DIR)/%.o: $(BOOT_DIR)/%.s
 clean:
 	rm -f $(SRC_DIR)/*.o $(BOOT_DIR)/*.o $(KERNEL_BIN)
 
-run: $(KERNEL_BIN)
-	qemu-system-i386 -kernel $(KERNEL_BIN) -m 32M
+run: all
+	qemu-system-i386 -kernel $(KERNEL_BIN)
 
 .PHONY: all clean run

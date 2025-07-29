@@ -31,8 +31,8 @@ void pic_init(void) {
     outb(PIC2_DATA, ICW4_8086); // ICW4: 8086 mode
 
     // Set the PICs to operate in 8086/88 mode
-    outb(PIC1_DATA, 0xFF);    // OCW1: All IRQs masked
-    outb(PIC2_DATA, 0xFF);    // OCW1: All IRQs masked
+    outb(PIC1_DATA, 0x00);    // OCW1: All IRQs masked
+    outb(PIC2_DATA, 0x00);    // OCW1: All IRQs masked
 }
 
 // Function to send End of Interrupt (EOI) to PICs

@@ -13,7 +13,6 @@ void keyboard_shutdown(void);
 void keyboard_driver_register(void);
 
 // Keyboard buffer API
-void keyboard_buffer_init(int size);
 int keyboard_buffer_empty(void);
 char keyboard_getchar(void);
 
